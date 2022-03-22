@@ -9,4 +9,4 @@ include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 # project components
 #set(COMPONENT_DIRS main components)
 
-project(blink)
+project( 4th_Year_Project_2021-2022_Neuromorphic_Cells_Using_Organic_Memristors)

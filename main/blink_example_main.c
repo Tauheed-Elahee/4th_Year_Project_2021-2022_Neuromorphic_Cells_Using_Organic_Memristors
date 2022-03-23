@@ -14,10 +14,10 @@
 #include "led_strip.h"
 #include "sdkconfig.h"
 
-// experiment with temperature sensor
-#include "driver/temp_sensor.h"
 
 // Custom components
+// Temperature Sensor // experiment with temperature sensor
+#include "temperature.h"
 // ESP32 C3 I2C
 #include "esp32c3_i2c.h"
 // MCP4542T
@@ -49,26 +49,7 @@ static void configure_led(void)
     gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
 }
 
-// temperature sensor settings
-static temp_sensor_config_t temp_sensor = {
-    .dac_offset = TSENS_DAC_L2,
-    .clk_div = 6,
-};
 
-static float tsens_out = 0;
-
-static void configure_temp_sensor(void)
-{
-    // Set temperature sensor configuration
-    temp_sensor_set_config(temp_sensor);
-    temp_sensor_start();
-}
-
-static void read_temp_sensor(void)
-{
-    temp_sensor_read_celsius(&tsens_out);
-    ESP_LOGI(TAG, "The temperature of the C3 chip is: %2.2f", tsens_out);
-}
 
 void app_main(void)
 {

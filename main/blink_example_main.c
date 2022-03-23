@@ -28,11 +28,11 @@ static const char *TAG = "example";
 void app_main(void)
 {
 
-    /* Configure the peripheral according to the LED type */
-    configure_led();
+    /* Temperature Sensor */
     configure_temp_sensor();
     read_temp_sensor();
 
+    mcp4542t_write_wiper_setting(MCP4542T_BASE_ADDR, 0, 0x004);
     uint16_t wiper_setting = mcp4542t_read_wiper_setting(MCP4542T_BASE_ADDR, 0);
 
     ESP_LOGI(TAG, "NON-VOLATILE-0 in Hex: %X", wiper_setting);

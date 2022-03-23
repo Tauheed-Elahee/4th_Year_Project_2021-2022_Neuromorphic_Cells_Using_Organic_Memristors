@@ -48,4 +48,12 @@ esp_err_t mcp4542t_register_read
     size_t len
 );
 
+esp_err_t mcp4542t_register_write
+(
+    uint8_t dev_addr,
+    uint8_t reg_addr,
+    uint16_t data
+);
+
 uint16_t mcp4542t_read_wiper_setting (uint8_t dev_addr, bool wiper_0_or_1);
+void mcp4542t_write_wiper_setting (uint8_t dev_addr, bool wiper_0_or_1, uint16_t data);

@@ -61,25 +61,21 @@ end:
 }
 
 uint16_t mcp4542t_read_wiper_setting(uint8_t dev_addr, bool wiper_0_or_1) {
-    char *TAG = "example";
-
+    // Determine the correct register address of the requested wiper
     uint8_t reg_addr = (wiper_0_or_1)? MCP4542T_NON_VOLATILE_1_REG_ADDR: MCP4542T_NON_VOLATILE_0_REG_ADDR;
 
     // Initialize I2C
     uint8_t data[2];
     i2c_config_t i2c_config = esp32c3_i2c_config_default();
 
-    ESP_ERROR_CHECK(esp32c3_i2c_master_init(i2c_config));
-    ESP_LOGI(TAG, "I2C initialized successfully.");
-
+    // Initialize I2C bus
+    esp32c3_i2c_master_init(i2c_config);
     // Read data from potentiometer
-    ESP_ERROR_CHECK(mcp4542t_register_read(dev_addr, reg_addr, data, 2));
-    ESP_LOGI(TAG, "NON-VOLATILE-0: %X %X", data[1], data[0]);
+    mcp4542t_register_read(dev_addr, reg_addr, data, 2);
+    // Shutdown I2C bus
+    i2c_driver_delete(I2C_MASTER_PORT);
 
-    // Shutdown I2C
-    ESP_ERROR_CHECK(i2c_driver_delete(I2C_MASTER_PORT));
-    ESP_LOGI(TAG, "I2C de-initialized successfully.");
-
+    // Collect buffer into a result
     uint16_t wiper_setting = data[1] << 4 | data[0];
 
     return wiper_setting;

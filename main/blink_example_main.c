@@ -20,6 +20,10 @@
 // Add I2C support
 #include "driver/i2c.h"
 
+// Custom components
+// ESP32 C3 I2C
+#include "esp32c3_i2c.h"
+
 // MCP454T Memory Map
 //#include "mcp4542t.h"
 
@@ -67,31 +71,7 @@ static void read_temp_sensor(void)
     ESP_LOGI(TAG, "The temperature of the C3 chip is: %2.2f", tsens_out);
 }
 
-// I2C stuff
-#define I2C_MASTER_PORT 0
-#define I2C_SDA_GPIO 6
-#define I2C_SCL_GPIO 7
-#define I2C_MASTER_TX_BUF_DISABLE   0                          /*!< I2C master doesn't need buffer */
-#define I2C_MASTER_RX_BUF_DISABLE   0                          /*!< I2C master doesn't need buffer */
-#define I2C_MASTER_FREQ_HZ 400000
-#define I2c_MASTER_FREQ_MS 1000
 
-static i2c_config_t i2c_config = {
-    .mode = I2C_MODE_MASTER,
-    .sda_io_num = I2C_SDA_GPIO,
-    .sda_pullup_en = GPIO_PULLUP_ENABLE,
-    .scl_io_num = I2C_SCL_GPIO,
-    .scl_pullup_en = GPIO_PULLUP_ENABLE,
-    .master.clk_speed = I2C_MASTER_FREQ_HZ,
-    .clk_flags = 0,
-};
-
-static esp_err_t esp32c3_i2c_master_init(void)
-{
-    i2c_param_config(I2C_MASTER_PORT, &i2c_config);
-
-    return i2c_driver_install(I2C_MASTER_PORT, i2c_config.mode, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
-}
 
 // i2c with potentiometer
 #define MCP4542T_ADDR 0b0101100
@@ -128,7 +108,7 @@ static esp_err_t esp32c3_i2c_master_init(void)
 // https://pcbartists.com/firmware/esp32-firmware/esp32-i2c-repeated-start-esp-idf-example/
 esp_err_t mcp4542t_register_read(uint8_t reg_addr, uint8_t *data, size_t len)
 {
-    TickType_t wait_period = (TickType_t)(I2c_MASTER_FREQ_MS / portTICK_PERIOD_MS);
+    TickType_t wait_period = (TickType_t)(I2C_MASTER_FREQ_MS / portTICK_PERIOD_MS);
     esp_err_t err = ESP_OK;
     i2c_cmd_handle_t read_cmd = i2c_cmd_link_create();
 
@@ -228,7 +208,9 @@ void app_main(void)
 
     // Initialize I2C
     uint8_t data[2];
-    ESP_ERROR_CHECK(esp32c3_i2c_master_init());
+    i2c_config_t i2c_config = esp32c3_i2c_config_default();
+
+    ESP_ERROR_CHECK(esp32c3_i2c_master_init(i2c_config));
     ESP_LOGI(TAG, "I2C initialized successfully.");
 
     // Read data from potentiometer

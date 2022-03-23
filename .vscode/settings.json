@@ -17,6 +17,7 @@
     "mcp4542t.h": "c",
     "array": "c",
     "string": "c",
-    "string_view": "c"
+    "string_view": "c",
+    "esp32c3_i2c.h": "c"
   }
 }

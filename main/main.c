@@ -14,6 +14,8 @@
 #include "led_strip.h"
 #include "sdkconfig.h"
 
+// MAC addr
+#include "esp_mac.h"
 
 // Custom components
 // Temperature Sensor // experiment with temperature sensor
@@ -32,7 +34,14 @@ void app_main(void)
     configure_temp_sensor();
     read_temp_sensor();
 
-    mcp4542t_write_wiper_setting(MCP4542T_BASE_ADDR, 0, 0x004);
+    uint8_t base_mac_addr_array[6] = {0x00, 0x0d, 0x3f, 0xcd, 0x02, 0x5f};
+
+    ESP_ERROR_CHECK(esp_efuse_mac_get_default(&base_mac_addr_array));
+    for (int byte_index = 0; byte_index < 6; byte_index++) {
+        ESP_LOGI(TAG, "MAC Address: %X", base_mac_addr_array[byte_index]);
+    }
+
+    mcp4542t_write_wiper_setting(MCP4542T_BASE_ADDR, 0, 0x080);
     uint16_t wiper_setting = mcp4542t_read_wiper_setting(MCP4542T_BASE_ADDR, 0);
 
     ESP_LOGI(TAG, "NON-VOLATILE-0 in Hex: %X", wiper_setting);

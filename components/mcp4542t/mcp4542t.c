@@ -118,7 +118,7 @@ uint16_t mcp4542t_read_wiper_setting(uint8_t dev_addr, bool wiper_0_or_1) {
     i2c_driver_delete(I2C_MASTER_PORT);
 
     // Collect buffer into a result
-    uint16_t wiper_setting = data[1] << 4 | data[0];
+    uint16_t wiper_setting = data[1] << 8 | data[0];
 
     return wiper_setting;
 }
